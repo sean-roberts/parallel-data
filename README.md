@@ -1,6 +1,6 @@
 # ParallelData
 
-## The Problem
+## The Problem 🐌
 When building client heavy apps or single page apps (SPAs), the most common way to structure the load of your application is:
 
 ```
@@ -20,7 +20,7 @@ The requesting of JS and CSS is usually handled in parallel - whoohoo. When that
 What if we could speed up our app and request the required app data at the same time as when you request the app assets?
 
 
-## A Solution
+## A Solution ⚡️
 ParallelData gives you a drop in JavaScript snippet that allows you to define the data urls you want to request and it will request them immediately (in parallel with your main JS/CSS downloads). Without changing anything in your app code, your app's next requests for those endpoints will be given the responses as they were received when ParallelData received them. With that your app is now faster and no longer waiting for your app to load, parse, and initialize to start requesting it's data!
 
 
