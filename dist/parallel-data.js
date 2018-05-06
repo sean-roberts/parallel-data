@@ -26,7 +26,7 @@
     return method.toUpperCase() + '-' + url;
   };
 
-  var makeRequest = function makeRequest(method, url, headers, responseListener) {
+  var makeXHRRequest = function makeXHRRequest(method, url, headers, responseListener) {
 
     var key = getKey(method, url);
 
@@ -69,12 +69,12 @@
     xhr.send();
   };
 
-  function get(url, options) {
+  function getForXHR(url, options) {
     options = options || {};
     try {
-      makeRequest('GET', url, options.headers);
+      makeXHRRequest('GET', url, options.headers);
     } catch (e) {
-      error('could not makeRequest', e);
+      error('makeXHRRequest failed', e);
     }
   }
 
@@ -221,7 +221,7 @@
 
   window.ParallelData = {
     version: version,
-    get: get,
+    getForXHR: getForXHR,
     getRequestReference: getRequestReference,
 
     configure: function configure(config) {

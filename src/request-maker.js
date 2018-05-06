@@ -8,7 +8,7 @@ const getKey = (method, url)=>{
   return `${method.toUpperCase()}-${url}`
 }
 
-const makeRequest = (method, url, headers, responseListener)=>{
+const makeXHRRequest = (method, url, headers, responseListener)=>{
 
   const key = getKey(method, url)
 
@@ -51,12 +51,12 @@ const makeRequest = (method, url, headers, responseListener)=>{
   xhr.send()
 }
 
-export function get (url, options){
+export function getForXHR (url, options){
   options = options || {}
   try {
-    makeRequest('GET', url, options.headers)
+    makeXHRRequest('GET', url, options.headers)
   }catch(e){
-    error('could not makeRequest', e)
+    error('makeXHRRequest failed', e)
   }
 }
 

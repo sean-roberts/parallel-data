@@ -50,8 +50,8 @@ The scope of ParallelData is limited to loading data in parallel. For prefetchin
 
 ## The API ⚒
 
-### `ParallelData.get( url, options )`
-This method immediately kicks off a GET request to the specified URL with the provided options.
+### `ParallelData.getForXHR( url, options )`
+This method immediately kicks off a GET request to the specified URL with the provided options. Note, **this only matches requests that are `XMLHttpRequest` based** - if the request uses `window.fetch` it will not match (fetch support coming soon). This is needed because mapping XHR to a full `window.fetch` implementation is very difficult and will cause unnecessary bloat. 
 
 **Function Parameters**
 - `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app
