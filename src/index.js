@@ -3,11 +3,7 @@ import { get, getRequestReference } from './request-maker'
 import { attachInterceptor } from './request-interceptor'
 import { error } from './console'
 
-try {
-  attachInterceptor()
-}catch (e){
-  error('failed to run attachInterceptor', e)
-}
+attachInterceptor()
 
 window.ParallelData = {
   version,
