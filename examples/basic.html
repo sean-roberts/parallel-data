@@ -6,57 +6,84 @@
   </head>
   <body>
 
-    <script>
-      const begin = Date.now()
-    </script>
+    <!--
+      Note, you would add a version of ParallelData as an embedded script
+      and not load it this way in order to get maximum benefit
+     -->
     <script src="/dist/parallel-data.js"></script>
+
+
     <script>
-      console.log(`ParallelData requested and loaded in ${Date.now() - begin}ms`);
+
+      const begin = Date.now()
+
+      // All that's needed to get this data in parallel
+      ParallelData.get('https://jsonplaceholder.typicode.com/users/1')
+      ParallelData.get('https://jsonplaceholder.typicode.com/posts')
+
     </script>
 
+
     <script>
 
-      ParallelData.get('/')
+      // Even in this example you can see a good improvement when having the
+      // parallel fetching. Comment out the ParallelData.get calls above to see the
+      // timing differences. In real applications, this time difference is far greater
+      // on real websites given the amount of page weight, rendering times, and
+      // user networks
 
-      console.log('Starting "App" XHR')
+      // Note, we are adding a timeout to mimic a relatively quick request to fetch server SPA
+      setTimeout(()=>{
 
-      function makeXHR(url){
-        var x = new XMLHttpRequest()
-        x.open('GET', url)
-        x.onreadystatechange = function(){
-          console.log('onreadystatechange ready states', x.readyState, this.readyState);
-          console.log('onreadystatechange responseText length', x.responseText.length)
+        function getRequiredData(url, cb){
+
+          var x = new XMLHttpRequest()
+
+          x.open('GET', url)
+
+          x.onreadystatechange = function(){
+            console.log('onreadystatechange ready states', x.readyState, this.readyState);
+            console.log('onreadystatechange responseText length', x.responseText.length)
+
+            if(x.readyState === x.DONE){
+              cb()
+            }
+          }
+
+          x.onload = function(){
+            console.log('onload ready states', x.readyState, this.readyState);
+            console.log('onload responseText length', x.responseText.length)
+          }
+
+          const eventListener = function(e){
+            throw 'we should never call this callback'
+          }
+
+          x.addEventListener('load', eventListener)
+          x.removeEventListener('load', eventListener)
+
+          x.addEventListener('load', function(e){
+            console.log('load event listener ready states', x.readyState, this.readyState, e);
+            console.log('load event listener responseText length', x.responseText.length)
+          })
+          x.addEventListener('error', function(e){
+            console.log('error event listener ready states', x.readyState, this.readyState, e);
+            console.log('error event listener responseText length', x.responseText.length)
+          })
+
+          x.send()
         }
 
-        x.onload = function(){
-          console.log('onload ready states', x.readyState, this.readyState);
-          console.log('onload responseText length', x.responseText.length)
-        }
-
-        const eventListener = function(e){
-          throw 'we should never call this callback'
-        }
-
-        x.addEventListener('load', eventListener)
-        x.removeEventListener('load', eventListener)
-
-        x.addEventListener('load', function(e){
-          console.log('load event listener ready states', x.readyState, this.readyState, e);
-          console.log('load event listener responseText length', x.responseText.length)
+        // This scenario mimics: we need the user, then get the user's posts
+        // Though, there are better ways to structure this scenario in your app
+        // but these waterfall dependencies happen for a lot of interdependent requests
+        getRequiredData('https://jsonplaceholder.typicode.com/users/1', function(){
+          getRequiredData('https://jsonplaceholder.typicode.com/posts', function(){
+            document.write(`The App's required data was loaded and ready ${Date.now() - begin}ms after the HTML loaded`);
+          })
         })
-        x.addEventListener('error', function(e){
-          console.log('error event listener ready states', x.readyState, this.readyState, e);
-          console.log('error event listener responseText length', x.responseText.length)
-        })
 
-        // setTimeout(()=>{
-        //   x.send()
-        // }, 70)
-        x.send()
-      }
-
-
-      makeXHR('/')
+      }, 200)
     </script>
   </body>
 </html>
