@@ -64,4 +64,4 @@ This method immediately kicks off a GET request to the specified URL with the pr
 **Function Parameters**
 - `configOptions` - an object specifying configuration for ParallelData
   - `configOptions.allRequests` - an object specifying options to be applied to all requests
-    - `configOptions.headers` - an object specifying the headers to be added to all requests
+    - `configOptions.allRequests.headers` - an object specifying the headers to be added to all requests
