@@ -55,7 +55,7 @@
 
     // merge in the allRequests headers with the request specific headers
     headers = Object.assign({}, allRequestsOptions.headers, headers);
-    console.log(headers);
+
     Object.keys(headers || {}).forEach(function (key) {
       xhr.setRequestHeader(key, headers[key]);
     });
@@ -84,9 +84,7 @@
   }
 
   function configureAllRequests(options) {
-    console.log(allRequestsOptions, options);
     allRequestsOptions = Object.assign({}, allRequestsOptions, options || {});
-    console.log(allRequestsOptions);
   }
 
   function attachInterceptor() {

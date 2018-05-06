@@ -88,7 +88,7 @@
         // but these waterfall dependencies happen for a lot of interdependent requests
         getRequiredData('https://jsonplaceholder.typicode.com/users/1', function(){
           getRequiredData('https://jsonplaceholder.typicode.com/posts', function(){
-            document.write(`The App's required data was loaded and ready ${Date.now() - begin}ms after the HTML loaded`);
+            document.body.innerHTML += (`The App's required data was loaded and ready ${Date.now() - begin}ms after the HTML loaded`);
           })
         })
 

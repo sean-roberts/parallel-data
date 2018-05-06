@@ -65,3 +65,17 @@ This method immediately kicks off a GET request to the specified URL with the pr
 - `configOptions` - an object specifying configuration for ParallelData
   - `configOptions.allRequests` - an object specifying options to be applied to all requests
     - `configOptions.allRequests.headers` - an object specifying the headers to be added to all requests
+
+-------
+
+## Running examples locally 🏃
+- Clone this repo locally
+- Run `npm run examples`
+- Visit [http://localhost:8080/examples/basic.html](http://localhost:8080/examples/basic.html)
+
+## Building library locally 🔨
+- Clone this repo locally
+- Build options:
+  - Run `npm run dev` to watch files and perform a build
+  - Run `npm run build` to run a single build
+- Run examples locally to have quick access to sites that are running the built library
