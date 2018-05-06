@@ -41,7 +41,7 @@ The scope of ParallelData is limited to loading data in parallel. For prefetchin
 
 # How To Use 👍🏻
 
-- Pick the version you want to use on your site from the [dist directory][/dist/]
+- Pick the version you want to use on your site from the [dist directory](/dist/)
 - Copy that version's code into your HTML file for your app
 - Below that, start using the `ParallelData` API
 
