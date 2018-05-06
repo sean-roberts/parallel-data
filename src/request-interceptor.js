@@ -1,3 +1,4 @@
+import { error } from './console'
 
 export function attachInterceptor (){
 
@@ -80,37 +81,41 @@ export function attachInterceptor (){
       // async path so that the PD request does not start invoking
       // callbacks before we are ready for everything to start invoking
       ;(window.setImmediate || window.setTimeout)(()=>{
+        try {
 
-        // map xhr functions over
-        parallelXHR.onreadystatechange = this.onreadystatechange
+          // map xhr functions over
+          parallelXHR.onreadystatechange = this.onreadystatechange
 
-        // map all event target functions over
-        // If the XHR has not finished the request, these event reassignments
-        // will be automatically picked up
-        Object.keys(XMLHttpRequestEventTarget.prototype).forEach((prop)=>{
-          parallelXHR[prop] = this[prop]
-        })
+          // map all event target functions over
+          // If the XHR has not finished the request, these event reassignments
+          // will be automatically picked up
+          Object.keys(XMLHttpRequestEventTarget.prototype).forEach((prop)=>{
+            parallelXHR[prop] = this[prop]
+          })
 
-        this.__PDListeners__.forEach((listener)=>{
-          parallelXHR[`${listener.action}EventListener`].apply(parallelXHR, listener.args)
-        })
+          this.__PDListeners__.forEach((listener)=>{
+            parallelXHR[`${listener.action}EventListener`].apply(parallelXHR, listener.args)
+          })
 
-        // access all properties from the original xhr (the current this context)
-        // before we assign this property as it is the pivot property in accessors
-        this.__PDRequest__ = parallelXHR
+          // access all properties from the original xhr (the current this context)
+          // before we assign this property as it is the pivot property in accessors
+          this.__PDRequest__ = parallelXHR
 
-        // NOTE: The decision here is that we will not invoke the
-        // onreadystatechange function for all states up to where it currently is
-        if(parallelXHR.onreadystatechange){
-          parallelXHR.onreadystatechange()
-        }
-
-        Object.keys(parallelRequest.events).forEach((eventName)=>{
-          if(parallelRequest.events[eventName]){
-            // dispatchin will fire the "on" events and registered event listeners
-            this.dispatchEvent(parallelRequest.events[eventName])
+          // NOTE: The decision here is that we will not invoke the
+          // onreadystatechange function for all states up to where it currently is
+          if(parallelXHR.onreadystatechange){
+            parallelXHR.onreadystatechange()
           }
-        })
+
+          Object.keys(parallelRequest.events).forEach((eventName)=>{
+            if(parallelRequest.events[eventName]){
+              // dispatchin will fire the "on" events and registered event listeners
+              this.dispatchEvent(parallelRequest.events[eventName])
+            }
+          })
+        }catch(e){
+          error('transferring events failed', e)
+        }
       }, 0)
     }else {
       originalSend.call(this, body)

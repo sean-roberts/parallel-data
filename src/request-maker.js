@@ -1,3 +1,5 @@
+import { error } from './console'
+
 const fetchedRequests = {};
 
 const getKey = (method, url)=>{
@@ -37,7 +39,6 @@ const makeRequest = (method, url, headers, responseListener)=>{
 
   Object.keys(storedRequest.events).forEach((eventName)=>{
     xhr.addEventListener(eventName, (event) => {
-      console.log('Event fired', eventName, event)
       storedRequest.events[eventName] = event
     })
   })
@@ -47,7 +48,11 @@ const makeRequest = (method, url, headers, responseListener)=>{
 
 export function get (url, options){
   options = options || {}
-  makeRequest('GET', url, options.headers)
+  try {
+    makeRequest('GET', url, options.headers)
+  }catch(e){
+    error('could not makeRequest', e)
+  }
 }
 
 export function getRequestReference (request){

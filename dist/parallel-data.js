@@ -4,6 +4,20 @@
 
   var version = "1.0.0";
 
+  var LIB = 'ParallelData';
+
+  function error() {
+    try {
+      var _console2;
+
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      (_console2 = console).error.apply(_console2, [LIB].concat(args));
+    } catch (e) {}
+  }
+
   var fetchedRequests = {};
 
   var getKey = function getKey(method, url) {
@@ -43,7 +57,6 @@
 
     Object.keys(storedRequest.events).forEach(function (eventName) {
       xhr.addEventListener(eventName, function (event) {
-        console.log('Event fired', eventName, event);
         storedRequest.events[eventName] = event;
       });
     });
@@ -53,7 +66,11 @@
 
   function get(url, options) {
     options = options || {};
-    makeRequest('GET', url, options.headers);
+    try {
+      makeRequest('GET', url, options.headers);
+    } catch (e) {
+      error('could not makeRequest', e);
+    }
   }
 
   function getRequestReference(request) {
@@ -143,37 +160,41 @@
         // async path so that the PD request does not start invoking
         // callbacks before we are ready for everything to start invoking
         ;(window.setImmediate || window.setTimeout)(function () {
+          try {
 
-          // map xhr functions over
-          parallelXHR.onreadystatechange = _this.onreadystatechange;
+            // map xhr functions over
+            parallelXHR.onreadystatechange = _this.onreadystatechange;
 
-          // map all event target functions over
-          // If the XHR has not finished the request, these event reassignments
-          // will be automatically picked up
-          Object.keys(XMLHttpRequestEventTarget.prototype).forEach(function (prop) {
-            parallelXHR[prop] = _this[prop];
-          });
+            // map all event target functions over
+            // If the XHR has not finished the request, these event reassignments
+            // will be automatically picked up
+            Object.keys(XMLHttpRequestEventTarget.prototype).forEach(function (prop) {
+              parallelXHR[prop] = _this[prop];
+            });
 
-          _this.__PDListeners__.forEach(function (listener) {
-            parallelXHR[listener.action + 'EventListener'].apply(parallelXHR, listener.args);
-          });
+            _this.__PDListeners__.forEach(function (listener) {
+              parallelXHR[listener.action + 'EventListener'].apply(parallelXHR, listener.args);
+            });
 
-          // access all properties from the original xhr (the current this context)
-          // before we assign this property as it is the pivot property in accessors
-          _this.__PDRequest__ = parallelXHR;
+            // access all properties from the original xhr (the current this context)
+            // before we assign this property as it is the pivot property in accessors
+            _this.__PDRequest__ = parallelXHR;
 
-          // NOTE: The decision here is that we will not invoke the
-          // onreadystatechange function for all states up to where it currently is
-          if (parallelXHR.onreadystatechange) {
-            parallelXHR.onreadystatechange();
-          }
-
-          Object.keys(parallelRequest.events).forEach(function (eventName) {
-            if (parallelRequest.events[eventName]) {
-              // dispatchin will fire the "on" events and registered event listeners
-              _this.dispatchEvent(parallelRequest.events[eventName]);
+            // NOTE: The decision here is that we will not invoke the
+            // onreadystatechange function for all states up to where it currently is
+            if (parallelXHR.onreadystatechange) {
+              parallelXHR.onreadystatechange();
             }
-          });
+
+            Object.keys(parallelRequest.events).forEach(function (eventName) {
+              if (parallelRequest.events[eventName]) {
+                // dispatchin will fire the "on" events and registered event listeners
+                _this.dispatchEvent(parallelRequest.events[eventName]);
+              }
+            });
+          } catch (e) {
+            error('transferring events failed', e);
+          }
         }, 0);
       } else {
         originalSend.call(this, body);
@@ -181,13 +202,16 @@
     };
   }
 
-  attachInterceptor();
+  try {
+    attachInterceptor();
+  } catch (e) {
+    error('failed to run attachInterceptor', e);
+  }
 
   window.ParallelData = {
     version: version,
     get: get,
-    getRequestReference: getRequestReference,
-    config: function config(configuration) {}
+    getRequestReference: getRequestReference
   };
 
 }());
