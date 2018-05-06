@@ -19,19 +19,21 @@ The requesting of JS and CSS is usually handled in parallel - whoohoo. When that
 
 What if we could speed up our app and request the required app data at the same time as when you request the app assets?
 
+## HTTP2 Push 🌟
+The HTTP2 Push capabilities are 100% targeted at solving these problems and that's awesome. But for some, using HTTP2 is not a available or a practical option - that's where ParallelData comes in.
 
 ## A Solution ⚡️
 ParallelData gives you a drop in JavaScript snippet that allows you to define the data urls you want to request and it will request them immediately (in parallel with your main JS/CSS downloads). Without changing anything in your app code, your app's next requests for those endpoints will be given the responses as they were received when ParallelData received them. With that your app is now faster and no longer waiting for your app to load, parse, and initialize to start requesting it's data!
 
+### Note 🗒
+The scope of ParallelData is limited to loading data in parallel. For prefetching/preloading assets (css, js, images, etc.) I would look into resource hints/prioritization: [spec](https://www.w3.org/TR/resource-hints/) and [web fundamentals](https://developers.google.com/web/fundamentals/performance/resource-prioritization)
 
 ### Request/Response Scenarios
 
-- If ParallelData **has received** the endpoint response before your app requests it, your app requests will immediately get the responses.
-- If ParallelData **has not received** the endpoint response before your app requests it, your app requests will get the responses when the original ParallelData responses are received.
+- If ParallelData **has received** the endpoint response before your app requests it, your app requests will immediately get the responses and respective events.
+- If ParallelData **has not received** the endpoint response before your app requests it, your app requests will get the responses and respective events when the original ParallelData responses are received.
 
-### Error Scenarios
-
-If a ParallelData request receives a response with a non 2XX or 3XX status code, we consider that to be an error response.
-
-- If an error response is detected before your app requests that endpoint, by default ParallelData will not give that response to your app's request response handler and will allow it to send its request normally. This allows a sort of retry logic and should help catch any misconfigured requesting on ParallelData.
-- If an error response is detected after your app requests that endpoint, by default we will take your app's request and send it out. With that, make sure you configure ParallelData correctly for your endpoints to not add latency trying to speed it up.
+## Networking Options Support ✅
+- [x] XHR support
+- [x] Sending Headers
+- [] Fetch support

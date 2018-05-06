@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ParallelData Initial Example</title>
+  </head>
+  <body>
+
+    <script>
+      const begin = Date.now()
+    </script>
+    <script src="/dist/parallel-data.js"></script>
+    <script>
+      console.log(`ParallelData requested and loaded in ${Date.now() - begin}ms`);
+    </script>
+
+    <script>
+
+      ParallelData.get('/d_config')
+
+      console.log('Starting "App" XHR')
+
+      function makeXHR(url){
+        var x = new XMLHttpRequest()
+        x.open('GET', url)
+        x.onreadystatechange = function(){
+          console.log('onreadystatechange ready states', x.readyState, this.readyState);
+          console.log('onreadystatechange responseText length', x.responseText.length)
+        }
+
+        x.onload = function(){
+          console.log('onload ready states', x.readyState, this.readyState);
+          console.log('onload responseText length', x.responseText.length)
+        }
+
+        const eventListener = function(e){
+          throw 'we should never call this callback'
+        }
+
+        x.addEventListener('load', eventListener)
+        x.removeEventListener('load', eventListener)
+
+        x.addEventListener('load', function(e){
+          console.log('load event listener ready states', x.readyState, this.readyState, e);
+          console.log('load event listener responseText length', x.responseText.length)
+        })
+        x.addEventListener('error', function(e){
+          console.log('error event listener ready states', x.readyState, this.readyState, e);
+          console.log('error event listener responseText length', x.responseText.length)
+        })
+
+        // setTimeout(()=>{
+        //   x.send()
+        // }, 70)
+        x.send()
+      }
+
+
+      makeXHR('/')
+    </script>
+  </body>
+</html>
