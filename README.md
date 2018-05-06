@@ -38,14 +38,17 @@ The scope of ParallelData is limited to loading data in parallel. For prefetchin
 - [x] Sending Headers
 - [ ] Fetch support
 
+---------
 
-# How To Use 👍🏻
+## How To Use 👍🏻
 
 - Pick the version you want to use on your site from the [dist directory](/dist/)
 - Copy that version's code into your HTML file for your app
 - Below that, start using the `ParallelData` API
 
-# `ParallelData` API ⚒
+
+
+## The API ⚒
 
 ### `ParallelData.get( url, options )`
 This method immediately kicks off a GET request to the specified URL with the provided options.
