@@ -28,12 +28,29 @@ ParallelData gives you a drop in JavaScript snippet that allows you to define th
 ### Note 🗒
 The scope of ParallelData is limited to loading data in parallel. For prefetching/preloading assets (css, js, images, etc.) I would look into resource hints/prioritization: [spec](https://www.w3.org/TR/resource-hints/) and [web fundamentals](https://developers.google.com/web/fundamentals/performance/resource-prioritization)
 
-### Request/Response Scenarios
+### Request/Response Scenarios 🔄
 
 - If ParallelData **has received** the endpoint response before your app requests it, your app requests will immediately get the responses and respective events.
 - If ParallelData **has not received** the endpoint response before your app requests it, your app requests will get the responses and respective events when the original ParallelData responses are received.
 
 ## Networking Options Support ✅
-- [x] XHR support
+- [x] XHR support (GET requests only)
 - [x] Sending Headers
-- [] Fetch support
+- [ ] Fetch support
+
+
+# How To Use 👍🏻
+
+- Pick the version you want to use on your site from the [dist directory][/dist/]
+- Copy that version's code into your HTML file for your app
+- Below that, start using the `ParallelData` API
+
+# `ParallelData` API ⚒
+
+### `ParallelData.get( url, options )`
+This method immediately kicks off a GET request to the specified URL with the provided options.
+
+**Function Parameters**
+- `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app
+- `options` - an object specifying request configuration
+  - `options.headers` - an object specifying the request headers to be added
