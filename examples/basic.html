@@ -17,6 +17,15 @@
 
       const begin = Date.now()
 
+      // If I needed to add a header to all my requests I would do something like this:
+      // ParallelData.configure({
+      //   allRequests: {
+      //     headers: {
+      //       'X-TOKEN': 'your-token-for-requests'
+      //     }
+      //   }
+      // })
+
       // All that's needed to get this data in parallel
       ParallelData.get('https://jsonplaceholder.typicode.com/users/1')
       ParallelData.get('https://jsonplaceholder.typicode.com/posts')

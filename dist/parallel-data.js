@@ -20,6 +20,8 @@
 
   var fetchedRequests = {};
 
+  var allRequestsOptions = {};
+
   var getKey = function getKey(method, url) {
     return method.toUpperCase() + '-' + url;
   };
@@ -51,6 +53,9 @@
 
     xhr.open(method, url);
 
+    // merge in the allRequests headers with the request specific headers
+    headers = Object.assign({}, allRequestsOptions.headers, headers);
+    console.log(headers);
     Object.keys(headers || {}).forEach(function (key) {
       xhr.setRequestHeader(key, headers[key]);
     });
@@ -76,6 +81,12 @@
   function getRequestReference(request) {
     var key = getKey(request.method, request.url);
     return fetchedRequests[key];
+  }
+
+  function configureAllRequests(options) {
+    console.log(allRequestsOptions, options);
+    allRequestsOptions = Object.assign({}, allRequestsOptions, options || {});
+    console.log(allRequestsOptions);
   }
 
   function attachInterceptor() {
@@ -213,7 +224,15 @@
   window.ParallelData = {
     version: version,
     get: get,
-    getRequestReference: getRequestReference
+    getRequestReference: getRequestReference,
+
+    configure: function configure(config) {
+      config = config || {};
+
+      if (config.allRequests) {
+        configureAllRequests(config.allRequests);
+      }
+    }
   };
 
 }());

@@ -1,6 +1,8 @@
 import { error } from './console'
 
-const fetchedRequests = {};
+const fetchedRequests = {}
+
+let allRequestsOptions = {}
 
 const getKey = (method, url)=>{
   return `${method.toUpperCase()}-${url}`
@@ -33,6 +35,9 @@ const makeRequest = (method, url, headers, responseListener)=>{
 
   xhr.open(method, url)
 
+  // merge in the allRequests headers with the request specific headers
+  headers = Object.assign({}, allRequestsOptions.headers, headers)
+  console.log(headers)
   Object.keys(headers || {}).forEach((key)=>{
     xhr.setRequestHeader(key, headers[key])
   })
@@ -58,4 +63,10 @@ export function get (url, options){
 export function getRequestReference (request){
   const key = getKey(request.method, request.url)
   return fetchedRequests[key]
+}
+
+export function configureAllRequests (options){
+  console.log(allRequestsOptions, options)
+  allRequestsOptions = Object.assign({}, allRequestsOptions, options || {})
+  console.log(allRequestsOptions)
 }

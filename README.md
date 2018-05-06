@@ -35,7 +35,7 @@ The scope of ParallelData is limited to loading data in parallel. For prefetchin
 
 ## Networking Options Support ✅
 - [x] XHR support (GET requests only)
-- [x] Sending Headers
+- [x] Sending Headers (per request or for all requests)
 - [ ] Fetch support
 
 ---------
@@ -57,3 +57,11 @@ This method immediately kicks off a GET request to the specified URL with the pr
 - `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app
 - `options` - an object specifying request configuration
   - `options.headers` - an object specifying the request headers to be added
+
+### `ParallelData.configure( configOptions )`
+This method immediately kicks off a GET request to the specified URL with the provided options.
+
+**Function Parameters**
+- `configOptions` - an object specifying configuration for ParallelData
+  - `configOptions.allRequests` - an object specifying options to be applied to all requests
+    - `configOptions.headers` - an object specifying the headers to be added to all requests
