@@ -1,5 +1,5 @@
 import { version } from '../package.json'
-import { getForXHR, getForFetch, getRequestReference, configureAllRequests } from './request-maker'
+import { getForXHR, getForFetch, configureAllRequests } from './request-maker'
 import { XHRInterceptor, fetchInterceptor } from './request-interceptor'
 import { error } from './console'
 
@@ -10,7 +10,6 @@ window.ParallelData = {
   version,
   getForXHR,
   getForFetch,
-  getRequestReference,
 
   configure: (config)=>{
     config = config || {}

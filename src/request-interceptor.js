@@ -1,3 +1,4 @@
+import { getRequestReference } from './request-maker'
 import { error } from './console'
 
 export function XHRInterceptor (){
@@ -68,7 +69,7 @@ export function XHRInterceptor (){
     const originalSend = XHRProto.send
     XHRProto.send = function(body){
 
-      const parallelRequest = window.ParallelData.getRequestReference(this.__PDOpen__, 'xhr')
+      const parallelRequest = getRequestReference(this.__PDOpen__, 'xhr')
       const parallelXHR = parallelRequest && parallelRequest.xhrRef
 
       if(!this.__PDInternal__ && parallelXHR && !parallelXHR.__PDConsumed__){
@@ -162,7 +163,7 @@ export function fetchInterceptor (){
         method = 'GET'
       }
 
-      const parallelFetch = window.ParallelData.getRequestReference({method, url}, 'fetch')
+      const parallelFetch = getRequestReference({method, url}, 'fetch')
 
       if(!init.__PDFetch__ && parallelFetch){
         return parallelFetch

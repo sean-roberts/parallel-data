@@ -1,7 +1,7 @@
 import { error } from './console'
 
-const xhrRequests = {}
-const fetchRequests = {}
+let xhrRequests = {}
+let fetchRequests = {}
 
 let allRequestsOptions = {}
 
@@ -112,4 +112,9 @@ export function getRequestReference (request, type){
 
 export function configureAllRequests (options){
   allRequestsOptions = Object.assign({}, allRequestsOptions, options || {})
+}
+
+export function clearAllRequests () {
+  xhrRequests = {}
+  fetchRequests = {}  
 }

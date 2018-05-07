@@ -200,7 +200,7 @@
       XHRProto.send = function (body) {
         var _this = this;
 
-        var parallelRequest = window.ParallelData.getRequestReference(this.__PDOpen__, 'xhr');
+        var parallelRequest = getRequestReference(this.__PDOpen__, 'xhr');
         var parallelXHR = parallelRequest && parallelRequest.xhrRef;
 
         if (!this.__PDInternal__ && parallelXHR && !parallelXHR.__PDConsumed__) {
@@ -294,7 +294,7 @@
           method = 'GET';
         }
 
-        var parallelFetch = window.ParallelData.getRequestReference({ method: method, url: url }, 'fetch');
+        var parallelFetch = getRequestReference({ method: method, url: url }, 'fetch');
 
         if (!init.__PDFetch__ && parallelFetch) {
           return parallelFetch;
@@ -314,7 +314,6 @@
     version: version,
     getForXHR: getForXHR,
     getForFetch: getForFetch,
-    getRequestReference: getRequestReference,
 
     configure: function configure(config) {
       config = config || {};
