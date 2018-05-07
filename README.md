@@ -60,13 +60,15 @@ This method immediately kicks off a GET request to the specified URL with the pr
 - `options` - an object specifying request configuration
   - `options.headers` - an object specifying the request headers to be added
 
+
 ### `ParallelData.getForFetch( url, options )`
 This method immediately kicks off a GET request to the specified URL with the provided options. Note, **this only matches requests that are `window.fetch` based**. By using this function, we assume that your app uses `window.fetch` if it is available and falls back to `XMLHttpRequest` for requests if it is not. With that, ParallelData will do the same. If you use this function and `window.fetch` is not available, we will automatically fallback to calling `ParallelData.getForXHR` internally for you.
 
 **Function Parameters**
-- `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app
-- `options` - an object specifying request configuration
-  - `options.headers` - an object specifying the request headers to be added
+- `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app.
+- `options` - an object specifying request configuration. We allow the full set of options that `window.fetch` allows.
+  - Note, `options.credentials` is set to `"include"` by default and `options.redirect` is set to `"follow"` by default
+
 
 ### `ParallelData.configure( configOptions )`
 This method immediately kicks off a GET request to the specified URL with the provided options.
@@ -81,7 +83,7 @@ This method immediately kicks off a GET request to the specified URL with the pr
 ## Running examples locally 🏃
 - Clone this repo locally
 - Run `npm run examples`
-- Visit [http://localhost:8080/examples/basic.html](http://localhost:8080/examples/basic.html)
+- Visit [http://localhost:8080/examples/xhr.html](http://localhost:8080/examples/xhr.html) or [http://localhost:8080/examples/fetch.html](http://localhost:8080/examples/fetch.html)
 
 ## Building library locally 🔨
 - Clone this repo locally

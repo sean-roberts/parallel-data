@@ -154,10 +154,10 @@ export function fetchInterceptor (){
         url = input.url
       }
 
-      if(input.method){
-        method = input.method
-      }else if(init.method){
+      if(init.method){
         method = init.method
+      }else if(input.method){
+        method = input.method
       }else {
         method = 'GET'
       }
