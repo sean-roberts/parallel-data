@@ -1,6 +1,6 @@
 import { error } from './console'
 
-export function attachInterceptor (){
+export function XHRInterceptor (){
   try {
     const XHRProto = XMLHttpRequest.prototype
 
@@ -68,7 +68,7 @@ export function attachInterceptor (){
     const originalSend = XHRProto.send
     XHRProto.send = function(body){
 
-      const parallelRequest = window.ParallelData.getRequestReference(this.__PDOpen__)
+      const parallelRequest = window.ParallelData.getRequestReference(this.__PDOpen__, 'xhr')
       const parallelXHR = parallelRequest && parallelRequest.xhrRef
 
       if(!this.__PDInternal__ && parallelXHR && !parallelXHR.__PDConsumed__){
@@ -125,6 +125,54 @@ export function attachInterceptor (){
       }
     }
   }catch (e){
-    error('failed to run attachInterceptor', e)
+    error('failed to run XHRInterceptor', e)
   }
+}
+
+export function fetchInterceptor (){
+
+  try {
+
+    const originalFetch = window.fetch
+
+    if(!originalFetch || !window.Promise){
+      // fetch is not available
+      return
+    }
+
+    window.fetch = function(input, init){
+
+      input = input || {}
+      init = init || {}
+
+      let url;
+      let method;
+
+      if(typeof input === 'string'){
+        url = input
+      }else if(input.url) {
+        url = input.url
+      }
+
+      if(input.method){
+        method = input.method
+      }else if(init.method){
+        method = init.method
+      }else {
+        method = 'GET'
+      }
+
+      const parallelFetch = window.ParallelData.getRequestReference({method, url}, 'fetch')
+
+      if(!init.__PDFetch__ && parallelFetch){
+        return parallelFetch
+      }
+
+      return originalFetch.apply(window, arguments)
+    }
+
+  }catch (e) {
+    error('failed to run fetchInterceptor', e)
+  }
+
 }

@@ -18,7 +18,8 @@
     } catch (e) {}
   }
 
-  var fetchedRequests = {};
+  var xhrRequests = {};
+  var fetchRequests = {};
 
   var allRequestsOptions = {};
 
@@ -31,13 +32,13 @@
     var key = getKey(method, url);
 
     // don't allow duplicate fetches for the same url/method combo
-    if (fetchedRequests[key]) {
+    if (xhrRequests[key]) {
       return;
     }
 
     var xhr = new XMLHttpRequest();
 
-    var storedRequest = fetchedRequests[key] = {
+    var storedRequest = xhrRequests[key] = {
       url: url,
       method: method,
       headers: headers,
@@ -54,9 +55,9 @@
     xhr.open(method, url);
 
     // merge in the allRequests headers with the request specific headers
-    headers = Object.assign({}, allRequestsOptions.headers, headers);
+    headers = Object.assign({}, allRequestsOptions.headers, headers || {});
 
-    Object.keys(headers || {}).forEach(function (key) {
+    Object.keys(headers).forEach(function (key) {
       xhr.setRequestHeader(key, headers[key]);
     });
 
@@ -69,6 +70,32 @@
     xhr.send();
   };
 
+  var makeFetchRequest = function makeFetchRequest(method, url, options) {
+    var key = getKey(method, url);
+
+    // don't allow duplicate fetches for the same url/method combo
+    if (fetchRequests[key]) {
+      return;
+    }
+
+    fetchRequests[key] = fetch(url, Object.assign({}, options, {
+
+      __PDFetch__: true,
+
+      method: method,
+
+      // combine with allRequests configuration
+      headers: Object.assign({}, allRequestsOptions.headers, options.headers || {}),
+
+      // forced if not defined
+      credentials: options.credentials || 'include',
+      redirect: options.redirect || 'follow'
+    })).catch(function (e) {
+      error('fetch request failed', e);
+      throw e;
+    });
+  };
+
   function getForXHR(url, options) {
     options = options || {};
     try {
@@ -78,16 +105,33 @@
     }
   }
 
-  function getRequestReference(request) {
-    var key = getKey(request.method, request.url);
-    return fetchedRequests[key];
+  function getForFetch(url, options) {
+    options = options || {};
+    try {
+
+      if ('fetch' in window && 'Promise' in window) {
+        makeFetchRequest('GET', url, options);
+      } else {
+        // falling back to XHR if it is not supported
+        getForXHR(url, options);
+      }
+    } catch (e) {
+      error('makeXHRRequest failed', e);
+    }
+  }
+
+  function getRequestReference(request, type) {
+    if (request && request.method && request.url) {
+      var key = getKey(request.method, request.url);
+      return type === 'xhr' ? xhrRequests[key] : fetchRequests[key];
+    }
   }
 
   function configureAllRequests(options) {
     allRequestsOptions = Object.assign({}, allRequestsOptions, options || {});
   }
 
-  function attachInterceptor() {
+  function XHRInterceptor() {
     try {
       var XHRProto = XMLHttpRequest.prototype;
 
@@ -156,7 +200,7 @@
       XHRProto.send = function (body) {
         var _this = this;
 
-        var parallelRequest = window.ParallelData.getRequestReference(this.__PDOpen__);
+        var parallelRequest = window.ParallelData.getRequestReference(this.__PDOpen__, 'xhr');
         var parallelXHR = parallelRequest && parallelRequest.xhrRef;
 
         if (!this.__PDInternal__ && parallelXHR && !parallelXHR.__PDConsumed__) {
@@ -213,15 +257,63 @@
         }
       };
     } catch (e) {
-      error('failed to run attachInterceptor', e);
+      error('failed to run XHRInterceptor', e);
     }
   }
 
-  attachInterceptor();
+  function fetchInterceptor() {
+
+    try {
+
+      var originalFetch = window.fetch;
+
+      if (!originalFetch || !window.Promise) {
+        // fetch is not available
+        return;
+      }
+
+      window.fetch = function (input, init) {
+
+        input = input || {};
+        init = init || {};
+
+        var url = void 0;
+        var method = void 0;
+
+        if (typeof input === 'string') {
+          url = input;
+        } else if (input.url) {
+          url = input.url;
+        }
+
+        if (input.method) {
+          method = input.method;
+        } else if (init.method) {
+          method = init.method;
+        } else {
+          method = 'GET';
+        }
+
+        var parallelFetch = window.ParallelData.getRequestReference({ method: method, url: url }, 'fetch');
+
+        if (!init.__PDFetch__ && parallelFetch) {
+          return parallelFetch;
+        }
+
+        return originalFetch.apply(window, arguments);
+      };
+    } catch (e) {
+      error('failed to run fetchInterceptor', e);
+    }
+  }
+
+  XHRInterceptor();
+  fetchInterceptor();
 
   window.ParallelData = {
     version: version,
     getForXHR: getForXHR,
+    getForFetch: getForFetch,
     getRequestReference: getRequestReference,
 
     configure: function configure(config) {

@@ -36,7 +36,9 @@ The scope of ParallelData is limited to loading data in parallel. For prefetchin
 ## Networking Options Support ✅
 - [x] XHR support (GET requests only)
 - [x] Sending Headers (per request or for all requests)
-- [ ] Fetch support
+- [x] Fetch support (GET requests only)
+
+_Please create an issue if there are more use-cases that make sense for ParallelData to support_
 
 ---------
 
@@ -51,7 +53,15 @@ The scope of ParallelData is limited to loading data in parallel. For prefetchin
 ## The API ⚒
 
 ### `ParallelData.getForXHR( url, options )`
-This method immediately kicks off a GET request to the specified URL with the provided options. Note, **this only matches requests that are `XMLHttpRequest` based** - if the request uses `window.fetch` it will not match (fetch support coming soon). This is needed because mapping XHR to a full `window.fetch` implementation is very difficult and will cause unnecessary bloat. 
+This method immediately kicks off a GET request to the specified URL with the provided options. Note, **this only matches requests that are `XMLHttpRequest` based**.
+
+**Function Parameters**
+- `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app
+- `options` - an object specifying request configuration
+  - `options.headers` - an object specifying the request headers to be added
+
+### `ParallelData.getForFetch( url, options )`
+This method immediately kicks off a GET request to the specified URL with the provided options. Note, **this only matches requests that are `window.fetch` based**. By using this function, we assume that your app uses `window.fetch` if it is available and falls back to `XMLHttpRequest` for requests if it is not. With that, ParallelData will do the same. If you use this function and `window.fetch` is not available, we will automatically fallback to calling `ParallelData.getForXHR` internally for you.
 
 **Function Parameters**
 - `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app
