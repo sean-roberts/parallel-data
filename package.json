@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "rollup -c -w",
     "build": "rollup -c",
-    "examples": "http-serve ./"
+    "examples": "http-serve ./",
+    "start": "npm run examples"
   },
   "repository": {
     "type": "git",
@@ -29,5 +30,8 @@
     "rollup-plugin-json": "^2.3.0",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-uglify": "^3.0.0"
+  },
+  "now": {
+    "alias": "parallel-data.now.sh"
   }
 }

@@ -80,7 +80,12 @@ This method immediately kicks off a GET request to the specified URL with the pr
 
 -------
 
-## Running examples locally 🏃
+## Running examples 🏃
+
+*Web*
+- Visit [https://parallel-data.now.sh/examples/xhr.html](https://parallel-data.now.sh/examples/xhr.html) or [https://parallel-data.now.sh/examples/fetch.html](https://parallel-data.now.sh/examples/fetch.html)
+
+*Locally*
 - Clone this repo locally
 - Run `npm run examples`
 - Visit [http://localhost:8080/examples/xhr.html](http://localhost:8080/examples/xhr.html) or [http://localhost:8080/examples/fetch.html](http://localhost:8080/examples/fetch.html)
@@ -95,6 +100,10 @@ This method immediately kicks off a GET request to the specified URL with the pr
 ## Testing library 🔍
 The tests for this library are interactive visual tests. This was decided because I did not want any testing framework to override anything in an non-browser fashion causing the results of the tests to hide something.
 
+*Web*
+- Visit [https://parallel-data.now.sh/examples/interactive-tests/](https://parallel-data.now.sh/examples/interactive-tests/)
+
+*Locally*
 - Clone this repo locally
 - Run `npm run examples`
 - Visit [http://localhost:8080/examples/interactive-tests/](http://localhost:8080/examples/interactive-tests/)
