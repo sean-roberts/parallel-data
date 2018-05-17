@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ParallelData Fetch Example</title>
+
+    <link rel="stylesheet" href="../interactive-tests.css"/>
+
+  </head>
+  <body>
+
+    <div id="fetch-available">
+      Scenario: ParallelData resolves fetchs after app requests are made
+
+      <br />
+      <br />
+
+      Assertions:
+
+      <div class="test num-requests"> Correct number of requests </div>
+      <div class="test data-resolved"> All fetch requests resolved </div>
+    </div>
+
+    <div id="fetch-unavailable">
+      Scenario: window.fetch is not supported by this browser, ParallelData will fallback to XHRs. ParallelData resolves XHRs after app requests are made
+
+      <br />
+      <br />
+
+      Assertions:
+
+      <div class="test num-requests"> Correct number of requests </div>
+      <div class="test correct-properties"> Properties reflect parallel load result </div>
+      <div class="test all-events-fired"> All events fired as expected </div>
+    </div>
+
+    <script src="../interactive-tests.js"></script>
+    <script src="/dist/parallel-data.js"></script>
+
+
+    <script>
+
+      // All that's needed to get this data in parallel
+      ParallelData.getForFetch('https://jsonplaceholder.typicode.com/users/1')
+      ParallelData.getForFetch('https://jsonplaceholder.typicode.com/posts')
+
+    </script>
+
+    <script>
+
+      var removeSection = document.getElementById( window.fetch ? 'fetch-unavailable' :  'fetch-available')
+      removeSection.parentNode.removeChild(removeSection)
+
+      if(window.fetch){
+        window.TestApp.runFetchTests({
+          delay: 2000
+        })
+      }else {
+        window.TestApp.runXHRTests({
+          delay: 2000
+        })
+      }
+    </script>
+
+  </body>
+</html>

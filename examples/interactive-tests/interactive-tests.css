@@ -1,0 +1,10 @@
+.test {
+  background-color: #ffe04b;
+  padding: 4px;
+}
+.pass {
+  background-color: #23c372;
+}
+.fail {
+  background-color: #ea5050;
+}

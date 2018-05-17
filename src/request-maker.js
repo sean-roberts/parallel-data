@@ -99,7 +99,7 @@ export function getForFetch (url, options){
       getForXHR(url, options)
     }
   }catch(e){
-    error('makeXHRRequest failed', e)
+    error('fetch request failed', e)
   }
 }
 
@@ -112,9 +112,4 @@ export function getRequestReference (request, type){
 
 export function configureAllRequests (options){
   allRequestsOptions = Object.assign({}, allRequestsOptions, options || {})
-}
-
-export function clearAllRequests () {
-  xhrRequests = {}
-  fetchRequests = {}  
 }

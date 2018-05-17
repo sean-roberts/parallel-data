@@ -91,3 +91,11 @@ This method immediately kicks off a GET request to the specified URL with the pr
   - Run `npm run dev` to watch files and perform a build
   - Run `npm run build` to run a single build
 - Run examples locally to have quick access to sites that are running the built library
+
+## Testing library 🔍
+The tests for this library are interactive visual tests. This was decided because I did not want any testing framework to override anything in an non-browser fashion causing the results of the tests to hide something.
+
+- Clone this repo locally
+- Run `npm run examples`
+- Visit [http://localhost:8080/examples/interactive-tests/](http://localhost:8080/examples/interactive-tests/)
+- You should expect to find everything green

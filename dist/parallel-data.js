@@ -116,7 +116,7 @@
         getForXHR(url, options);
       }
     } catch (e) {
-      error('makeXHRRequest failed', e);
+      error('fetch request failed', e);
     }
   }
 

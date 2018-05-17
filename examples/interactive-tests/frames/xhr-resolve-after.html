@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ParallelData XHR Example</title>
+
+
+    <link rel="stylesheet" href="../interactive-tests.css"/>
+
+  </head>
+  <body>
+
+    Scenario: ParallelData resolves XHRs after app requests are made
+
+    <br />
+    <br />
+
+    Assertions:
+
+    <div class="test num-requests"> Correct number of requests </div>
+    <div class="test correct-properties"> Properties reflect parallel load result </div>
+    <div class="test all-events-fired"> All events fired as expected </div>
+
+
+    <script src="../interactive-tests.js"></script>
+    <script src="/dist/parallel-data.js"></script>
+
+
+    <script>
+
+      // All that's needed to get this data in parallel
+      ParallelData.getForXHR('https://jsonplaceholder.typicode.com/users/1')
+      ParallelData.getForXHR('https://jsonplaceholder.typicode.com/posts')
+
+    </script>
+
+    <script>
+      window.TestApp.runXHRTests({
+        delay: 2000
+      })
+    </script>
+
+  </body>
+</html>
