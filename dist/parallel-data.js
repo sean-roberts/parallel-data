@@ -18,6 +18,37 @@
     } catch (e) {}
   }
 
+  function assign(target, varArgs) {
+    if (typeof Object.assign === 'function') {
+      return Object.assign.apply(Object, arguments);
+    }
+
+    // adapted from Object.assign polyfill:
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+
+    if (target == null) {
+      // TypeError if undefined or null
+      throw new TypeError('Cannot convert undefined or null to object');
+    }
+
+    var to = Object(target);
+
+    for (var index = 1; index < arguments.length; index++) {
+      var nextSource = arguments[index];
+
+      if (nextSource != null) {
+        // Skip over if undefined or null
+        for (var nextKey in nextSource) {
+          // Avoid bugs when hasOwnProperty is shadowed
+          if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+            to[nextKey] = nextSource[nextKey];
+          }
+        }
+      }
+    }
+    return to;
+  }
+
   var xhrRequests = {};
   var fetchRequests = {};
 
@@ -55,7 +86,7 @@
     xhr.open(method, url);
 
     // merge in the allRequests headers with the request specific headers
-    headers = Object.assign({}, allRequestsOptions.headers, headers || {});
+    headers = assign({}, allRequestsOptions.headers, headers || {});
 
     Object.keys(headers).forEach(function (key) {
       xhr.setRequestHeader(key, headers[key]);
@@ -78,14 +109,14 @@
       return;
     }
 
-    fetchRequests[key] = fetch(url, Object.assign({}, options, {
+    fetchRequests[key] = fetch(url, assign({}, options, {
 
       __PDFetch__: true,
 
       method: method,
 
       // combine with allRequests configuration
-      headers: Object.assign({}, allRequestsOptions.headers, options.headers || {}),
+      headers: assign({}, allRequestsOptions.headers, options.headers || {}),
 
       // forced if not defined
       credentials: options.credentials || 'include',
@@ -128,7 +159,7 @@
   }
 
   function configureAllRequests(options) {
-    allRequestsOptions = Object.assign({}, allRequestsOptions, options || {});
+    allRequestsOptions = assign({}, allRequestsOptions, options || {});
   }
 
   function XHRInterceptor() {
@@ -148,7 +179,7 @@
           // Defining a new getter for xhr fields allows us to redirect where
           // values we return come from, allowing in app callbacks to reference
           // the ParallelData xhr values
-          Object.defineProperty(XHRProto, prop, Object.assign({}, descriptor, {
+          Object.defineProperty(XHRProto, prop, assign({}, descriptor, {
             get: function get() {
               if (!this.__PDInternal__ && this.__PDRequest__) {
                 return this.__PDRequest__[prop];
@@ -221,7 +252,9 @@
               // map all event target functions over
               // If the XHR has not finished the request, these event reassignments
               // will be automatically picked up
-              Object.keys(XMLHttpRequestEventTarget.prototype).forEach(function (prop) {
+              var onEventProps = ['onloadstart', 'onprogress', 'onabort', 'onerror', 'onload', 'ontimeout', 'onloadend'];
+
+              onEventProps.forEach(function (prop) {
                 parallelXHR[prop] = _this[prop];
               });
 

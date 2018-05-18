@@ -197,18 +197,18 @@ window.TestApp.runFetchTests = function(testOptions){
   }
 
   var runTest = function(){
-    fetch(URL1).then((r)=>{
+    fetch(URL1).then( function(r){
       return r.json()
-    }).then((responseData)=>{
+    }).then( function(responseData){
       checkData(responseData)
       return fetch( new Request(URL2) )
-    }).then((r)=>{
+    }).then( function(r){
       return r.json()
-    }).then((responseData)=>{
+    }).then( function(responseData){
       checkData(responseData)
       verifyNetworkCalls()
       pass('data-resolved')
-    }).catch((e)=>{
+    }).catch( function(e){
       fail('data-resolved')
       console.error('fetch error caught', e)
     })

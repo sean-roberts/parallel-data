@@ -1,4 +1,5 @@
 import { error } from './console'
+import { assign } from './utils'
 
 let xhrRequests = {}
 let fetchRequests = {}
@@ -37,7 +38,7 @@ const makeXHRRequest = (method, url, headers, responseListener)=>{
   xhr.open(method, url)
 
   // merge in the allRequests headers with the request specific headers
-  headers = Object.assign({}, allRequestsOptions.headers, headers || {})
+  headers = assign({}, allRequestsOptions.headers, headers || {})
 
   Object.keys(headers).forEach((key)=>{
     xhr.setRequestHeader(key, headers[key])
@@ -60,14 +61,14 @@ const makeFetchRequest = (method, url, options) => {
     return;
   }
 
-  fetchRequests[key] = fetch(url, Object.assign({}, options, {
+  fetchRequests[key] = fetch(url, assign({}, options, {
 
     __PDFetch__: true,
 
     method,
 
     // combine with allRequests configuration
-    headers: Object.assign({}, allRequestsOptions.headers, options.headers || {}),
+    headers: assign({}, allRequestsOptions.headers, options.headers || {}),
 
     // forced if not defined
     credentials: options.credentials || 'include',
@@ -111,5 +112,5 @@ export function getRequestReference (request, type){
 }
 
 export function configureAllRequests (options){
-  allRequestsOptions = Object.assign({}, allRequestsOptions, options || {})
+  allRequestsOptions = assign({}, allRequestsOptions, options || {})
 }

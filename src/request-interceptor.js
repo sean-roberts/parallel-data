@@ -1,5 +1,6 @@
 import { getRequestReference } from './request-maker'
 import { error } from './console'
+import { assign } from './utils'
 
 export function XHRInterceptor (){
   try {
@@ -18,7 +19,7 @@ export function XHRInterceptor (){
         // Defining a new getter for xhr fields allows us to redirect where
         // values we return come from, allowing in app callbacks to reference
         // the ParallelData xhr values
-        Object.defineProperty(XHRProto, prop, Object.assign({}, descriptor, {
+        Object.defineProperty(XHRProto, prop, assign({}, descriptor, {
           get: function(){
             if(!this.__PDInternal__ && this.__PDRequest__){
               return this.__PDRequest__[prop]
@@ -90,7 +91,9 @@ export function XHRInterceptor (){
             // map all event target functions over
             // If the XHR has not finished the request, these event reassignments
             // will be automatically picked up
-            Object.keys(XMLHttpRequestEventTarget.prototype).forEach((prop)=>{
+            const onEventProps = ['onloadstart', 'onprogress', 'onabort', 'onerror', 'onload', 'ontimeout', 'onloadend']
+
+            onEventProps.forEach((prop)=>{
               parallelXHR[prop] = this[prop]
             })
 
