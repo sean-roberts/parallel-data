@@ -60,7 +60,7 @@ function getRequiredDataXHR(url, options){
 
 window.TestApp = {};
 window.TestApp.runXHRTests = function(testOptions){
-  var runTest = function(url, loadCb, initialReadyState){
+  var runTest = function(url, loadCb){
     // This scenario mimics: we need the user, then get the user's posts
     // Though, there are better ways to structure this scenario in your app
     // but these waterfall dependencies happen for a lot of interdependent requests
@@ -110,19 +110,7 @@ window.TestApp.runXHRTests = function(testOptions){
 
       onReadyStateChange: function(){
         if(xhrStatus === undefined){
-
           xhrStatus = this.readyState
-
-          if(initialReadyState !== undefined){
-
-            // we expect this to run well before we get a response so we want to assert we are getting
-            // all of the readyState sequencing
-            if(this.readyState !== initialReadyState){
-              fail('correct-properties')
-              console.error('The onreadystatechange\'s intial readyState for immediate is wrong', initialReadyState, this.readyState)
-              return
-            }
-          }
         }else if(this.readyState !== xhrStatus && this.readyState !== ++xhrStatus){
           fail('all-events-fired')
           console.error('The transition for onreadystatechange\'s readyState was not sequentially called', this.readyState, xhrStatus)
@@ -172,7 +160,7 @@ window.TestApp.runXHRTests = function(testOptions){
   }else {
     runTest(URL1, function(){
       runTest(URL2)
-    }, /*initialReadyState*/ XMLHttpRequest.prototype.OPENED)
+    })
   }
 }
 
