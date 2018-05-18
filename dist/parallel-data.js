@@ -1,8 +1,8 @@
-// ParallelData v1.0.0 by Sean Roberts @DevelopSean
+// ParallelData v1.0.1 by Sean Roberts @DevelopSean
 (function () {
   'use strict';
 
-  var version = "1.0.0";
+  var version = "1.0.1";
 
   var LIB = 'ParallelData';
 
