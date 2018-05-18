@@ -40,6 +40,11 @@ The scope of ParallelData is limited to loading data in parallel. For prefetchin
 
 _Please create an issue if there are more use-cases that make sense for ParallelData to support_
 
+## Browser Support 🌐
+
+ParallelData is tested and works in IE 9+, Chrome, FireFox, Safari, and all modern mobile browsers.
+
+
 ---------
 
 ## How To Use 👍🏻
