@@ -76,7 +76,7 @@ This method immediately kicks off a GET request to the specified URL with the pr
 
 
 ### `ParallelData.configure( configOptions )`
-This method immediately kicks off a GET request to the specified URL with the provided options.
+This method allows you to specify configuration at the library level. Currently, it's primary use is for setting options (like common headers) that should be used for all requests - allowing you to omit adding those options for each `getForFetch()` or `getForXHR()` call.
 
 **Function Parameters**
 - `configOptions` - an object specifying configuration for ParallelData
