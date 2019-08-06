@@ -10,7 +10,7 @@ const getKey = (method, url)=>{
   return `${method.toUpperCase()}-${url}`
 }
 
-const makeXHRRequest = (method, url, headers, responseListener)=>{
+const makeXHRRequest = (method, url, headers, options )=>{
 
   const key = getKey(method, url)
 
@@ -44,6 +44,19 @@ const makeXHRRequest = (method, url, headers, responseListener)=>{
     xhr.setRequestHeader(key, headers[key])
   })
 
+
+  if (options && options.onParallelDataResponse) {
+    console.log('set');
+    xhr.addEventListener('readystatechange', () => {
+      console.log('internal', xhr.readyState);
+      if (xhr.readyState === 4) {
+        options.onParallelDataResponse(xhr, {
+          transferredToApp: !!xhr.__PDConsumed__
+        })
+      }
+    })
+  }
+
   Object.keys(storedRequest.events).forEach((eventName)=>{
     xhr.addEventListener(eventName, (event) => {
       storedRequest.events[eventName] = event
@@ -61,7 +74,7 @@ const makeFetchRequest = (method, url, options) => {
     return;
   }
 
-  fetchRequests[key] = fetch(url, assign({}, options, {
+  const fetchSent = fetchRequests[key] = fetch(url, assign({}, options, {
 
     __PDFetch__: true,
 
@@ -73,7 +86,14 @@ const makeFetchRequest = (method, url, options) => {
     // forced if not defined
     credentials: options.credentials || 'include',
     redirect: options.redirect || 'follow'
-  })).catch((e)=>{
+  })).then( response => {
+    if (options && options.onParallelDataResponse) {
+      options.onParallelDataResponse(response, {
+        transferredToApp: !!fetchSent.__PDConsumed__
+      })
+    }
+    return response
+  }).catch((e)=>{
     error('fetch request failed', e);
     throw e
   })
@@ -83,7 +103,7 @@ const makeFetchRequest = (method, url, options) => {
 export function getForXHR (url, options){
   options = options || {}
   try {
-    makeXHRRequest('GET', url, options.headers)
+    makeXHRRequest('GET', url, options.headers, options)
   }catch(e){
     error('makeXHRRequest failed', e)
   }

@@ -169,6 +169,9 @@ export function fetchInterceptor (){
       const parallelFetch = getRequestReference({method, url}, 'fetch')
 
       if(!init.__PDFetch__ && parallelFetch){
+
+        parallelFetch.__PDConsumed__ = true;
+
         return parallelFetch
       }
 
