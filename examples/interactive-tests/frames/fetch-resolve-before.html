@@ -19,6 +19,7 @@
 
       <div class="test num-requests"> Correct number of requests </div>
       <div class="test data-resolved"> All fetch requests resolved </div>
+      <div class="test on-parallel-data-response"> onParallelDataResponse fired as expected </div>
     </div>
 
     <div id="fetch-unavailable">
@@ -32,6 +33,7 @@
       <div class="test num-requests"> Correct number of requests </div>
       <div class="test correct-properties"> Properties reflect parallel load result </div>
       <div class="test all-events-fired"> All events fired as expected </div>
+      <div class="test on-parallel-data-response"> onParallelDataResponse fired as expected </div>
     </div>
 
     <script src="../interactive-tests.js"></script>
@@ -39,9 +41,26 @@
 
 
     <script>
+      function pass(testClass) {
+        var el = document.querySelector('.test.' + testClass)
+        if (!el.classList.contains('fail')) {
+          el.classList.add('pass')
+        }
+      }
+      function fail(testClass) {
+        document.querySelector('.test.' + testClass).classList.add('fail')
+      }
 
       // All that's needed to get this data in parallel
-      ParallelData.getForFetch('https://jsonplaceholder.typicode.com/users/1')
+      ParallelData.getForFetch('https://jsonplaceholder.typicode.com/users/1', {
+        onParallelDataResponse: (response, context)=>{
+          if(response && typeof response.text === 'function' && context && context.transferredToApp === false){
+            pass('on-parallel-data-response')
+          }else {
+            fail('on-parallel-data-response')
+          }
+        }
+      })
       ParallelData.getForFetch('https://jsonplaceholder.typicode.com/posts')
 
     </script>
@@ -51,10 +70,15 @@
       var removeSection = document.getElementById( window.fetch ? 'fetch-unavailable' :  'fetch-available')
       removeSection.parentNode.removeChild(removeSection)
 
+      
       if(window.fetch){
-        window.TestApp.runFetchTests()
+        window.TestApp.runFetchTests({
+          delay: 1000
+        })
       }else {
-        window.TestApp.runXHRTests()
+        window.TestApp.runXHRTests({
+          delay: 1000
+        })
       }
     </script>
 

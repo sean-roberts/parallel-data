@@ -19,14 +19,33 @@
     <div class="test num-requests"> Correct number of requests </div>
     <div class="test correct-properties"> Properties reflect parallel load result </div>
     <div class="test all-events-fired"> All events fired as expected </div>
+    <div class="test on-parallel-data-response"> onParallelDataResponse fired as expected </div>
 
     <script src="../interactive-tests.js"></script>
     <script src="/dist/parallel-data.js"></script>
 
     <script>
 
+    function pass(testClass) {
+        var el = document.querySelector('.test.' + testClass)
+        if (!el.classList.contains('fail')) {
+          el.classList.add('pass')
+        }
+      }
+      function fail(testClass) {
+        document.querySelector('.test.' + testClass).classList.add('fail')
+      }
+
       // All that's needed to get this data in parallel
-      ParallelData.getForXHR('https://jsonplaceholder.typicode.com/users/1')
+      ParallelData.getForXHR('https://jsonplaceholder.typicode.com/users/1', {
+        onParallelDataResponse: (xhr, context) => {
+          if (xhr && typeof xhr.send === 'function' && context && context.transferredToApp === true) {
+            pass('on-parallel-data-response')
+          } else {
+            fail('on-parallel-data-response')
+          }
+        }
+      })
       ParallelData.getForXHR('https://jsonplaceholder.typicode.com/posts')
 
     </script>

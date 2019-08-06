@@ -1,8 +1,8 @@
-// ParallelData v1.0.1 by Sean Roberts @DevelopSean
+// ParallelData v1.1.0 by Sean Roberts @DevelopSean
 (function () {
   'use strict';
 
-  var version = "1.0.1";
+  var version = "1.1.0";
 
   var LIB = 'ParallelData';
 
@@ -58,7 +58,7 @@
     return method.toUpperCase() + '-' + url;
   };
 
-  var makeXHRRequest = function makeXHRRequest(method, url, headers, responseListener) {
+  var makeXHRRequest = function makeXHRRequest(method, url, headers, options) {
 
     var key = getKey(method, url);
 
@@ -92,6 +92,18 @@
       xhr.setRequestHeader(key, headers[key]);
     });
 
+    if (options && options.onParallelDataResponse) {
+      console.log('set');
+      xhr.addEventListener('readystatechange', function () {
+        console.log('internal', xhr.readyState);
+        if (xhr.readyState === 4) {
+          options.onParallelDataResponse(xhr, {
+            transferredToApp: !!xhr.__PDConsumed__
+          });
+        }
+      });
+    }
+
     Object.keys(storedRequest.events).forEach(function (eventName) {
       xhr.addEventListener(eventName, function (event) {
         storedRequest.events[eventName] = event;
@@ -109,7 +121,7 @@
       return;
     }
 
-    fetchRequests[key] = fetch(url, assign({}, options, {
+    var fetchSent = fetchRequests[key] = fetch(url, assign({}, options, {
 
       __PDFetch__: true,
 
@@ -121,7 +133,14 @@
       // forced if not defined
       credentials: options.credentials || 'include',
       redirect: options.redirect || 'follow'
-    })).catch(function (e) {
+    })).then(function (response) {
+      if (options && options.onParallelDataResponse) {
+        options.onParallelDataResponse(response, {
+          transferredToApp: !!fetchSent.__PDConsumed__
+        });
+      }
+      return response;
+    }).catch(function (e) {
       error('fetch request failed', e);
       throw e;
     });
@@ -130,7 +149,7 @@
   function getForXHR(url, options) {
     options = options || {};
     try {
-      makeXHRRequest('GET', url, options.headers);
+      makeXHRRequest('GET', url, options.headers, options);
     } catch (e) {
       error('makeXHRRequest failed', e);
     }
@@ -330,6 +349,9 @@
         var parallelFetch = getRequestReference({ method: method, url: url }, 'fetch');
 
         if (!init.__PDFetch__ && parallelFetch) {
+
+          parallelFetch.__PDConsumed__ = true;
+
           return parallelFetch;
         }
 
