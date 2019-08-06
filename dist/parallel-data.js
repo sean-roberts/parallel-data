@@ -1,8 +1,8 @@
-// ParallelData v1.1.0 by Sean Roberts @DevelopSean
+// ParallelData v1.1.1 by Sean Roberts @DevelopSean
 (function () {
   'use strict';
 
-  var version = "1.1.0";
+  var version = "1.1.1";
 
   var LIB = 'ParallelData';
 
@@ -135,7 +135,8 @@
       redirect: options.redirect || 'follow'
     })).then(function (response) {
       if (options && options.onParallelDataResponse) {
-        options.onParallelDataResponse(response, {
+        // note, cloning because interfaces like .text() and .json() can only be used once
+        options.onParallelDataResponse(response.clone(), {
           transferredToApp: !!fetchSent.__PDConsumed__
         });
       }
