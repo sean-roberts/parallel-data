@@ -64,7 +64,7 @@ This method immediately kicks off a GET request to the specified URL with the pr
 - `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app
 - `options` - an object specifying request configuration
   - `options.headers` - an object specifying the request headers to be added
-  - `options.onResponse` - a function callback that is called when the XHR request's readystate is complete. We will pass in the XHR in the first parameter and a ParallelData context object that can be used to know if the request was already handed off to the app.
+  - `options.onParallelDataResponse` - a function callback that is called when the XHR request's readystate is complete. We will pass in the XHR in the first parameter and a ParallelData context object that can be used to know if the request was already handed off to the app.
 
 
 ### `ParallelData.getForFetch( url, options )`
@@ -74,7 +74,7 @@ This method immediately kicks off a GET request to the specified URL with the pr
 - `url` - the url to load in parallel. This must **exactly** match the url used when requesting data in the app.
 - `options` - an object specifying request configuration. We allow the full set of options that `window.fetch` allows.
   - Note, `options.credentials` is set to `"include"` by default and `options.redirect` is set to `"follow"` by default
-- `options.onResponse` - a function callback that is called when the Fetch promise resolves. We will pass in the Fetch object in the first parameter and a ParallelData context object that can be used to know if the request was already handed off to the app.
+- `options.onParallelDataResponse` - a function callback that is called when the Fetch promise resolves. We will pass in the fetch response object in the first parameter and a ParallelData context object that can be used to know if the request was already handed off to the app.
 
 ### `ParallelData.configure( configOptions )`
 This method allows you to specify configuration at the library level. Currently, it's primary use is for setting options (like common headers) that should be used for all requests - allowing you to omit adding those options for each `getForFetch()` or `getForXHR()` call.
