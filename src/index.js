@@ -3,19 +3,24 @@ import { getForXHR, getForFetch, configureAllRequests } from './request-maker'
 import { XHRInterceptor, fetchInterceptor } from './request-interceptor'
 import { error } from './console'
 
-XHRInterceptor()
-fetchInterceptor()
 
 window.ParallelData = {
   version,
-  getForXHR,
-  getForFetch,
 
-  configure: (config)=>{
+  configure: (config) => {
     config = config || {}
 
-    if(config.allRequests){
+    if (config.allRequests) {
       configureAllRequests(config.allRequests)
     }
   }
+}
+
+if(INCLUDE_XHR){
+  window.ParallelData.getForXHR = getForXHR
+  XHRInterceptor()
+}
+if(INCLUDE_FETCH){
+  window.ParallelData.getForFetch = getForFetch;
+  fetchInterceptor()
 }

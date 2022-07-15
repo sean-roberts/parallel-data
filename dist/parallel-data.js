@@ -1,8 +1,8 @@
-// ParallelData v1.1.1 by Sean Roberts @DevelopSean
+// ParallelData v1.2.0 by Sean Roberts @DevelopSean
 (function () {
   'use strict';
 
-  var version = "1.1.1";
+  var version = "1.2.0";
 
   var LIB = 'ParallelData';
 
@@ -58,94 +58,102 @@
     return method.toUpperCase() + '-' + url;
   };
 
-  var makeXHRRequest = function makeXHRRequest(method, url, headers, options) {
+  var makeXHRRequest = function makeXHRRequest() {};
 
-    var key = getKey(method, url);
+  {
+    makeXHRRequest = function makeXHRRequest(method, url, headers, options) {
 
-    // don't allow duplicate fetches for the same url/method combo
-    if (xhrRequests[key]) {
-      return;
-    }
+      var key = getKey(method, url);
 
-    var xhr = new XMLHttpRequest();
-
-    var storedRequest = xhrRequests[key] = {
-      url: url,
-      method: method,
-      headers: headers,
-      xhrRef: xhr,
-      events: {
-        load: null,
-        error: null,
-        timeout: null
+      // don't allow duplicate fetches for the same url/method combo
+      if (xhrRequests[key]) {
+        return;
       }
-    };
 
-    xhr.__PDInternal__ = true;
+      var xhr = new XMLHttpRequest();
 
-    xhr.open(method, url);
-
-    // merge in the allRequests headers with the request specific headers
-    headers = assign({}, allRequestsOptions.headers, headers || {});
-
-    Object.keys(headers).forEach(function (key) {
-      xhr.setRequestHeader(key, headers[key]);
-    });
-
-    if (options && options.onParallelDataResponse) {
-      console.log('set');
-      xhr.addEventListener('readystatechange', function () {
-        console.log('internal', xhr.readyState);
-        if (xhr.readyState === 4) {
-          options.onParallelDataResponse(xhr, {
-            transferredToApp: !!xhr.__PDConsumed__
-          });
+      var storedRequest = xhrRequests[key] = {
+        url: url,
+        method: method,
+        headers: headers,
+        xhrRef: xhr,
+        events: {
+          load: null,
+          error: null,
+          timeout: null
         }
+      };
+
+      xhr.__PDInternal__ = true;
+
+      xhr.open(method, url);
+
+      // merge in the allRequests headers with the request specific headers
+      headers = assign({}, allRequestsOptions.headers, headers || {});
+
+      Object.keys(headers).forEach(function (key) {
+        xhr.setRequestHeader(key, headers[key]);
       });
-    }
 
-    Object.keys(storedRequest.events).forEach(function (eventName) {
-      xhr.addEventListener(eventName, function (event) {
-        storedRequest.events[eventName] = event;
-      });
-    });
-
-    xhr.send();
-  };
-
-  var makeFetchRequest = function makeFetchRequest(method, url, options) {
-    var key = getKey(method, url);
-
-    // don't allow duplicate fetches for the same url/method combo
-    if (fetchRequests[key]) {
-      return;
-    }
-
-    var fetchSent = fetchRequests[key] = fetch(url, assign({}, options, {
-
-      __PDFetch__: true,
-
-      method: method,
-
-      // combine with allRequests configuration
-      headers: assign({}, allRequestsOptions.headers, options.headers || {}),
-
-      // forced if not defined
-      credentials: options.credentials || 'include',
-      redirect: options.redirect || 'follow'
-    })).then(function (response) {
       if (options && options.onParallelDataResponse) {
-        // note, cloning because interfaces like .text() and .json() can only be used once
-        options.onParallelDataResponse(response.clone(), {
-          transferredToApp: !!fetchSent.__PDConsumed__
+        console.log('set');
+        xhr.addEventListener('readystatechange', function () {
+          console.log('internal', xhr.readyState);
+          if (xhr.readyState === 4) {
+            options.onParallelDataResponse(xhr, {
+              transferredToApp: !!xhr.__PDConsumed__
+            });
+          }
         });
       }
-      return response;
-    }).catch(function (e) {
-      error('fetch request failed', e);
-      throw e;
-    });
-  };
+
+      Object.keys(storedRequest.events).forEach(function (eventName) {
+        xhr.addEventListener(eventName, function (event) {
+          storedRequest.events[eventName] = event;
+        });
+      });
+
+      xhr.send();
+    };
+  }
+
+  var makeFetchRequest = function makeFetchRequest() {};
+
+  {
+    makeFetchRequest = function makeFetchRequest(method, url, options) {
+      var key = getKey(method, url);
+
+      // don't allow duplicate fetches for the same url/method combo
+      if (fetchRequests[key]) {
+        return;
+      }
+
+      var fetchSent = fetchRequests[key] = fetch(url, assign({}, options, {
+
+        __PDFetch__: true,
+
+        method: method,
+
+        // combine with allRequests configuration
+        headers: assign({}, allRequestsOptions.headers, options.headers || {}),
+
+        // forced if not defined
+        credentials: options.credentials || 'include',
+        redirect: options.redirect || 'follow'
+      })).then(function (response) {
+        if (options && options.onParallelDataResponse) {
+          // note, cloning because interfaces like .text() and .json() can only be used once
+          options.onParallelDataResponse(response.clone(), {
+            transferredToApp: !!fetchSent.__PDConsumed__
+          });
+        }
+        return response;
+      }).catch(function (e) {
+        error('fetch request failed', e);
+        throw e;
+      });
+    };
+  }
 
   function getForXHR(url, options) {
     options = options || {};
@@ -363,13 +371,8 @@
     }
   }
 
-  XHRInterceptor();
-  fetchInterceptor();
-
   window.ParallelData = {
     version: version,
-    getForXHR: getForXHR,
-    getForFetch: getForFetch,
 
     configure: function configure(config) {
       config = config || {};
@@ -379,5 +382,14 @@
       }
     }
   };
+
+  {
+    window.ParallelData.getForXHR = getForXHR;
+    XHRInterceptor();
+  }
+  {
+    window.ParallelData.getForFetch = getForFetch;
+    fetchInterceptor();
+  }
 
 }());
