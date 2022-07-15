@@ -1,8 +1,8 @@
-// ParallelData v1.2.0 by Sean Roberts @DevelopSean
+// ParallelData v1.2.1 by Sean Roberts @DevelopSean
 (function () {
   'use strict';
 
-  var version = "1.2.0";
+  var version = "1.2.1";
 
   var LIB = 'ParallelData';
 
@@ -19,34 +19,7 @@
   }
 
   function assign(target, varArgs) {
-    if (typeof Object.assign === 'function') {
-      return Object.assign.apply(Object, arguments);
-    }
-
-    // adapted from Object.assign polyfill:
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
-
-    if (target == null) {
-      // TypeError if undefined or null
-      throw new TypeError('Cannot convert undefined or null to object');
-    }
-
-    var to = Object(target);
-
-    for (var index = 1; index < arguments.length; index++) {
-      var nextSource = arguments[index];
-
-      if (nextSource != null) {
-        // Skip over if undefined or null
-        for (var nextKey in nextSource) {
-          // Avoid bugs when hasOwnProperty is shadowed
-          if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-            to[nextKey] = nextSource[nextKey];
-          }
-        }
-      }
-    }
-    return to;
+    return Object.assign.apply(Object, arguments);
   }
 
   var xhrRequests = {};
@@ -96,9 +69,7 @@
       });
 
       if (options && options.onParallelDataResponse) {
-        console.log('set');
         xhr.addEventListener('readystatechange', function () {
-          console.log('internal', xhr.readyState);
           if (xhr.readyState === 4) {
             options.onParallelDataResponse(xhr, {
               transferredToApp: !!xhr.__PDConsumed__

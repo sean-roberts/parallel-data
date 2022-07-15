@@ -1,6 +1,6 @@
 {
   "name": "parallel-data",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Speed up the loading of your application by loading its required data in parallel to your app code!",
   "scripts": {
     "dev": "rollup -c -w",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "http-serve": "^1.0.1",
     "regenerator-runtime": "^0.11.1",
     "rollup": "^0.57.1",

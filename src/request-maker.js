@@ -12,7 +12,7 @@ const getKey = (method, url)=>{
 
 let makeXHRRequest = ()=>{}
 
-if(INCLUDE_XHR ){
+if( INCLUDE_XHR ){
   makeXHRRequest = (method, url, headers, options )=>{
   
     const key = getKey(method, url)
@@ -49,9 +49,7 @@ if(INCLUDE_XHR ){
   
   
     if (options && options.onParallelDataResponse) {
-      console.log('set');
       xhr.addEventListener('readystatechange', () => {
-        console.log('internal', xhr.readyState);
         if (xhr.readyState === 4) {
           options.onParallelDataResponse(xhr, {
             transferredToApp: !!xhr.__PDConsumed__
