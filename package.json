@@ -1,6 +1,6 @@
 {
   "name": "parallel-data",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Speed up the loading of your application by loading its required data in parallel to your app code!",
   "scripts": {
     "dev": "rollup -c -w",
