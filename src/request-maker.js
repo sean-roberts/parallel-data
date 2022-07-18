@@ -110,7 +110,9 @@ if(INCLUDE_FETCH){
 export function getForXHR (url, options){
   options = options || {}
   try {
-    makeXHRRequest('GET', url, options.headers, options)
+    if (INCLUDE_XHR) {
+      makeXHRRequest('GET', url, options.headers, options)
+    }
   }catch(e){
     error('makeXHRRequest failed', e)
   }
@@ -124,7 +126,9 @@ export function getForFetch (url, options){
       makeFetchRequest('GET', url, options)
     }else {
       // falling back to XHR if it is not supported
-      getForXHR(url, options)
+      if (INCLUDE_XHR) {
+        getForXHR(url, options)
+      }
     }
   }catch(e){
     error('fetch request failed', e)

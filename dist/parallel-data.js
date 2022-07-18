@@ -129,7 +129,9 @@
   function getForXHR(url, options) {
     options = options || {};
     try {
-      makeXHRRequest('GET', url, options.headers, options);
+      {
+        makeXHRRequest('GET', url, options.headers, options);
+      }
     } catch (e) {
       error('makeXHRRequest failed', e);
     }
@@ -143,7 +145,9 @@
         makeFetchRequest('GET', url, options);
       } else {
         // falling back to XHR if it is not supported
-        getForXHR(url, options);
+        {
+          getForXHR(url, options);
+        }
       }
     } catch (e) {
       error('fetch request failed', e);
@@ -328,7 +332,9 @@
 
         var parallelFetch = getRequestReference({ method: method, url: url }, 'fetch');
 
-        if (!init.__PDFetch__ && parallelFetch) {
+        // ensure the fetch request is there but it's not consumed
+        // more than once
+        if (!init.__PDFetch__ && parallelFetch && !parallelFetch.__PDConsumed__) {
 
           parallelFetch.__PDConsumed__ = true;
 

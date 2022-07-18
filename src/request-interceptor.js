@@ -168,7 +168,9 @@ export function fetchInterceptor (){
 
       const parallelFetch = getRequestReference({method, url}, 'fetch')
 
-      if(!init.__PDFetch__ && parallelFetch){
+      // ensure the fetch request is there but it's not consumed
+      // more than once
+      if (!init.__PDFetch__ && parallelFetch && !parallelFetch.__PDConsumed__){
 
         parallelFetch.__PDConsumed__ = true;
 
